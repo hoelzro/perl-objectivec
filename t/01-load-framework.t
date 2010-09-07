@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 use Test::More;
+use Test::Exception;
 
 if($^O eq 'darwin') {
     plan tests => 2;
@@ -11,7 +12,9 @@ if($^O eq 'darwin') {
 
 use ObjectiveC;
 
-ok(! ObjectiveC->get_class('NSString'));
+dies_ok {
+    ObjectiveC->get_class('NSString');
+};
 
 ObjectiveC->load_framework('Foundation');
 
