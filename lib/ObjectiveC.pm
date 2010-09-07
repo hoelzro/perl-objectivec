@@ -5,6 +5,10 @@ use warnings;
 
 our $VERSION = '0.01';
 
+use Carp qw(croak);
+
+use namespace::clean;
+
 require XSLoader;
 XSLoader::load('ObjectiveC', $VERSION);
 
@@ -14,8 +18,27 @@ sub import {
 
     ObjectiveC->initialize;
 
-    no strict 'refs';
+    my @objects;
+
+    my $saw_framework = 0;
     foreach (@_) {
+        if($_ eq ':framework') {
+            $saw_framework = 1;
+            next;
+        }
+        if($saw_framework) {
+            ObjectiveC->load_framework($_);
+            $saw_framework = 0;
+        } else {
+            push @objects, $_;
+        }
+    }
+    if($saw_framework) {
+        croak ":framework specified at end of argument list";
+    }
+
+    no strict 'refs';
+    foreach (@objects) {
         my $class = ObjectiveC->get_class($_);
         *{$pkg . '::' . $_} = sub {
             return $class;
