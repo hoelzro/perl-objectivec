@@ -14,7 +14,25 @@
 
 typedef Class ObjectiveC__Class;
 
+#ifndef __APPLE_CC__
+BOOL _perl_objc_error_handler(id object, int code, const char *fmt, va_list ap)
+{
+    SV *errsv;
+
+    errsv = get_sv("@", GV_ADD);
+    sv_vsetpvf_mg(errsv, fmt, ap);
+    croak(NULL);
+}
+#endif
+
 MODULE = ObjectiveC		PACKAGE = ObjectiveC
+
+void initialize(self)
+        const char *self
+    CODE:
+#ifndef __APPLE_CC__
+        objc_set_error_handler(_perl_objc_error_handler);
+#endif
 
 void load_framework(self, name)
         const char *self
@@ -43,12 +61,12 @@ ObjectiveC::Class get_class(self, name)
     CODE:
 #ifdef __APPLE_CC__
         ObjectiveC__Class class = objc_getClass(name);
-#else
-        ObjectiveC__Class class = objc_get_class(name);
-#endif
         if(! class) {
             croak("No such class '%s'", name);
         }
+#else
+        ObjectiveC__Class class = objc_get_class(name);
+#endif
         RETVAL = class;
     OUTPUT:
         RETVAL

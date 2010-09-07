@@ -8,6 +8,21 @@ our $VERSION = '0.01';
 require XSLoader;
 XSLoader::load('ObjectiveC', $VERSION);
 
+sub import {
+    shift; # remove self
+    my $pkg = caller;
+
+    ObjectiveC->initialize;
+
+    no strict 'refs';
+    foreach (@_) {
+        my $class = ObjectiveC->get_class($_);
+        *{$pkg . '::' . $_} = sub {
+            return $class;
+        };
+    }
+}
+
 1;
 __END__
 =head1 NAME
