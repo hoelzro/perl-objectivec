@@ -16,7 +16,8 @@ typedef Class ObjectiveC__Class;
 
 MODULE = ObjectiveC		PACKAGE = ObjectiveC
 
-void load_framework(name)
+void load_framework(self, name)
+        const char *self
         const char *name
     CODE:
         char *fullname = NULL;
@@ -36,7 +37,8 @@ void load_framework(name)
             croak("Unable to load framework '%s': %s", name, dlerror());
         }
 
-ObjectiveC::Class get_class(name)
+ObjectiveC::Class get_class(self, name)
+        const char *self
         const char *name
     CODE:
 #ifdef __APPLE_CC__
@@ -51,7 +53,8 @@ ObjectiveC::Class get_class(name)
     OUTPUT:
         RETVAL
 
-void get_class_list()
+void get_class_list(self)
+        const char *self
     PREINIT:
 #ifdef __APPLE_CC__
         Class *classes = NULL;
