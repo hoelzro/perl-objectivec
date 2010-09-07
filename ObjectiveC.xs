@@ -6,33 +6,11 @@
 
 #include <dlfcn.h>
 
-#ifdef __APPLE_CC__
-# include <objc/runtime.h>
-#else
-# include <objc/objc-api.h>
-#endif
+#include <objc/runtime.h>
 
 typedef Class ObjectiveC__Class;
 
-#ifndef __APPLE_CC__
-BOOL _perl_objc_error_handler(id object, int code, const char *fmt, va_list ap)
-{
-    SV *errsv;
-
-    errsv = get_sv("@", GV_ADD);
-    sv_vsetpvf_mg(errsv, fmt, ap);
-    croak(NULL);
-}
-#endif
-
 MODULE = ObjectiveC		PACKAGE = ObjectiveC
-
-void initialize(self)
-        const char *self
-    CODE:
-#ifndef __APPLE_CC__
-        objc_set_error_handler(_perl_objc_error_handler);
-#endif
 
 void load_framework(self, name)
         const char *self
@@ -54,19 +32,16 @@ void load_framework(self, name)
         if(! handle) {
             croak("Unable to load framework '%s': %s", name, dlerror());
         }
+        dlclose(handle);
 
 ObjectiveC::Class get_class(self, name)
         const char *self
         const char *name
     CODE:
-#ifdef __APPLE_CC__
         ObjectiveC__Class class = objc_getClass(name);
         if(! class) {
             croak("No such class '%s'", name);
         }
-#else
-        ObjectiveC__Class class = objc_get_class(name);
-#endif
         RETVAL = class;
     OUTPUT:
         RETVAL
@@ -74,17 +49,10 @@ ObjectiveC::Class get_class(self, name)
 void get_class_list(self)
         const char *self
     PREINIT:
-#ifdef __APPLE_CC__
         Class *classes = NULL;
         int numClasses = 0;
         int i;
-#else
-        int numClasses = 0;
-        void *enum_state = NULL;
-        Class class;
-#endif
     PPCODE:
-#ifdef __APPLE_CC__
         numClasses = objc_getClassList(NULL, 0);
         classes = malloc(sizeof(Class) * numClasses);
         if(! classes) {
@@ -97,14 +65,3 @@ void get_class_list(self)
             PUSHs(sv_2mortal(newSVpv(name, 0)));
         }
         free(classes);
-#else
-        while(objc_next_class(&enum_state)) {
-            numClasses++;
-        }
-        EXTEND(SP, numClasses);
-        enum_state = NULL;
-        while(class = objc_next_class(&enum_state)) {
-            const char *name = class_get_class_name(class);
-            PUSHs(sv_2mortal(newSVpv(name, 0)));
-        }
-#endif

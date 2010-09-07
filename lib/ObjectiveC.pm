@@ -16,8 +16,6 @@ sub import {
     shift; # remove self
     my $pkg = caller;
 
-    ObjectiveC->initialize;
-
     my @objects;
 
     my $saw_framework = 0;
