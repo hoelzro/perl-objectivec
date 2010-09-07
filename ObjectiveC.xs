@@ -35,7 +35,6 @@ void load_framework(name)
         if(! handle) {
             croak("Unable to load framework '%s': %s", name, dlerror());
         }
-        dlclose(handle);
 
 ObjectiveC::Class get_class(name)
         const char *name
