@@ -1,4 +1,10 @@
+use strict;
+use warnings;
 use ExtUtils::MakeMaker;
+
+unless($^O eq 'darwin') {
+    die "OS unsupported\n";
+}
 
 WriteMakefile(
     NAME              => 'ObjectiveC',
