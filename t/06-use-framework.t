@@ -1,15 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More;
-
-BEGIN {
-    if($^O eq 'darwin') {
-        plan tests => 3;
-    } else {
-        plan skip_all => 'You need to be running Mac OS X to test framework loading!';
-    }
-}
+use Test::More plan tests => 3;
 
 use ObjectiveC qw(NSString :framework Foundation);
 
