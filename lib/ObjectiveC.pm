@@ -12,8 +12,6 @@ use namespace::clean;
 require XSLoader;
 XSLoader::load('ObjectiveC', $VERSION);
 
-ObjectiveC->load_framework('Foundation');
-
 sub import {
     shift; # remove self
     my $pkg = caller;

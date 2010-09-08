@@ -16,4 +16,5 @@ WriteMakefile(
     LIBS              => ['-lobjc'], # e.g., '-lm'
     DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
     INC               => '-I.', # e.g., '-I. -I/usr/include/other'
+    dynamic_lib       => { OTHERLDFLAGS => '-framework Foundation' },
 );
