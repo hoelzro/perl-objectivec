@@ -7,12 +7,12 @@ use Test::Exception;
 use ObjectiveC;
 
 dies_ok {
-    ObjectiveC->get_class('NSString');
+    ObjectiveC->get_class('NSWindow');
 };
 
-ObjectiveC->import(qw/:framework Foundation/);
+ObjectiveC->import(qw/:framework Cocoa/);
 
-ok(ObjectiveC->get_class('NSString'));
+ok(ObjectiveC->get_class('NSWindow'));
 
 dies_ok {
     ObjectiveC->import(qw/:framework/);

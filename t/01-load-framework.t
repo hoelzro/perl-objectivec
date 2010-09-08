@@ -7,9 +7,9 @@ use Test::Exception;
 use ObjectiveC;
 
 dies_ok {
-    ObjectiveC->get_class('NSString');
+    ObjectiveC->get_class('NSWindow');
 };
 
-ObjectiveC->load_framework('Foundation');
+ObjectiveC->load_framework('Cocoa');
 
-ok(ObjectiveC->get_class('NSString'));
+ok(ObjectiveC->get_class('NSWindow'));
