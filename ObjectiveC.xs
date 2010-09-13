@@ -8,7 +8,7 @@
 
 #include <objc/runtime.h>
 
-typedef Class ObjectiveC__Class;
+typedef id ObjectiveC__id;
 
 MODULE = ObjectiveC		PACKAGE = ObjectiveC
 
@@ -34,11 +34,11 @@ void load_framework(self, name)
         }
         dlclose(handle);
 
-ObjectiveC::Class get_class(self, name)
+ObjectiveC::id get_class(self, name)
         const char *self
         const char *name
     CODE:
-        ObjectiveC__Class class = objc_getClass(name);
+        ObjectiveC__id class = objc_getClass(name);
         if(! class) {
             croak("No such class '%s'", name);
         }

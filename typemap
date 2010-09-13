@@ -1,2 +1,2 @@
 TYPEMAP
-ObjectiveC::Class T_PTROBJ
+ObjectiveC::id T_PTROBJ
