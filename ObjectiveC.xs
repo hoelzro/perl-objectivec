@@ -96,3 +96,11 @@ ObjectiveC::id send_to_object(self, target, method_name, ...)
         RETVAL = retVal;
     OUTPUT:
         RETVAL
+
+MODULE = ObjectiveC		PACKAGE = ObjectiveC::id
+
+void DESTROY(self)
+        SV *self
+    CODE:
+        /* no-op (until we release the object) */
+        /* what about class objects? */
