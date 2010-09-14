@@ -10,7 +10,7 @@ ok(! __PACKAGE__->can('Object'));
 ObjectiveC->import('Object');
 ok(__PACKAGE__->can('Object'));
 my $object = Object();
-is(ref($object), 'ObjectiveC::Class');
+is(ref($object), 'ObjectiveC::id');
 dies_ok {
     ObjectiveC->import('ThisClassShouldNotExist');
 };
