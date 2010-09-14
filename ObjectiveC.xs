@@ -7,6 +7,7 @@
 #include <dlfcn.h>
 
 #include <objc/runtime.h>
+#include <objc/message.h>
 
 typedef id ObjectiveC__id;
 
@@ -65,3 +66,33 @@ void get_class_list(self)
             PUSHs(sv_2mortal(newSVpv(name, 0)));
         }
         free(classes);
+
+ObjectiveC::id send_to_object(self, target, method_name, ...)
+        const char *self
+        ObjectiveC::id target
+        const char *method_name
+    INIT:
+        SEL method_sel;
+        int nargs;
+        id retVal;
+        Method method = NULL;
+        const char *returnType = NULL;
+    CODE:
+        nargs = items - 3;
+        if(nargs != 0) {
+            croak("Calling with more than one argument is not yet implemented\n");
+        }
+        method_sel = sel_getUid(method_name);
+        method = class_getInstanceMethod(object_getClass(target), method_sel);
+        returnType = method_copyReturnType(method);
+        if(strncmp("@", returnType, 1)) {
+            SV *errsv = get_sv("@", GV_ADD);
+            sv_setpvf(errsv, "Non-id return types are not yet implemented (return type is '%s')", returnType);
+            free(returnType);
+            croak(NULL);
+        }
+        free(returnType);
+        retVal = objc_msgSend(target, method_sel);
+        RETVAL = retVal;
+    OUTPUT:
+        RETVAL
