@@ -6,10 +6,10 @@ use Test::Exception;
 
 use ObjectiveC;
 
-ok(! __PACKAGE__->can('Object'));
-ObjectiveC->import('Object');
-ok(__PACKAGE__->can('Object'));
-my $object = Object();
+ok(! __PACKAGE__->can('NSObject'));
+ObjectiveC->import('NSObject');
+ok(__PACKAGE__->can('NSObject'));
+my $object = NSObject();
 is(ref($object), 'ObjectiveC::id');
 dies_ok {
     ObjectiveC->import('ThisClassShouldNotExist');
