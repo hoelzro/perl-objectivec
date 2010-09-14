@@ -44,6 +44,21 @@ sub import {
     }
 }
 
+package ObjectiveC::id;
+
+use vars qw($AUTOLOAD);
+
+sub AUTOLOAD {
+    my $self = shift;
+
+    my $class = ref($self);
+    my $method = $AUTOLOAD;
+    $method =~ s/^${class}:://g;
+    return unless $method =~ /[a-z]/;
+
+    return ObjectiveC->send_to_object($self, $method, @_);
+}
+
 1;
 __END__
 =head1 NAME
