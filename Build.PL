@@ -16,6 +16,8 @@ my $builder = Module::Build->new(
     xs_files => {
         'ObjectiveC.xs' => 'lib/ObjectiveC.xs',
     },
+    c_source => 'src',
+    extra_compiler_flags => ['-I.', '-x', 'objective-c'],
     extra_linker_flags => ['-lobjc', '-framework', 'Foundation'],
 );
 
