@@ -2,7 +2,7 @@ Makefile
 Makefile.old
 ObjectiveC.bs
 ObjectiveC.c
-ObjectiveC.o
+*.o
 blib/
 pm_to_blib
 Build
