@@ -32,7 +32,7 @@ SV *demarshal_return_value(NSInvocation *invocation)
     [invocation getReturnValue: &return_buffer];
     switch(return_type[0]) {
         case _C_ID:
-            result = newRV_inc(newSViv(return_buffer.object));
+            result = newRV_inc(newSViv((IV) return_buffer.object));
             stash = gv_stashpv("ObjectiveC::id", 0);
             sv_bless(result, stash);
             break;
