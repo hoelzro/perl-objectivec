@@ -12,6 +12,8 @@ use namespace::clean;
 require XSLoader;
 XSLoader::load('ObjectiveC', $VERSION);
 
+ObjectiveC->init_autorelease_pool;
+
 sub import {
     shift; # remove self
     my $pkg = caller;
@@ -57,6 +59,10 @@ sub AUTOLOAD {
     return unless $method =~ /[a-z]/;
 
     return ObjectiveC->send_to_object($self, $method, @_);
+}
+
+END {
+    ObjectiveC->release_autorelease_pool;
 }
 
 1;
