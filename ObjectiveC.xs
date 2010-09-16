@@ -12,6 +12,8 @@
 typedef id ObjectiveC__id;
 
 extern SV *invoke_with_perl_args(id, SV *, AV *);
+extern void _init_autorelease_pool(void);
+extern void _release_autorelease_pool(void);
 
 AV *get_selector_and_args(pTHX_ SV *selector_name)
 {
@@ -45,6 +47,16 @@ AV *get_selector_and_args(pTHX_ SV *selector_name)
 }
 
 MODULE = ObjectiveC		PACKAGE = ObjectiveC
+
+void init_autorelease_pool(self)
+        const char *self
+    CODE:
+        _init_autorelease_pool();
+
+void release_autorelease_pool(self)
+        const char *self
+    CODE:
+        _release_autorelease_pool();
 
 void load_framework(self, name)
         const char *self
