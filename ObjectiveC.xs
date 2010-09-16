@@ -11,6 +11,8 @@
 
 typedef id ObjectiveC__id;
 
+extern SV *invoke_with_perl_args(id, SV *, AV *);
+
 AV *get_selector_and_args(pTHX_ SV *selector_name)
 {
     dSP;
@@ -98,33 +100,19 @@ void get_class_list(self)
         }
         free(classes);
 
-ObjectiveC::id send_to_object(self, target, method_name, ...)
+SV *send_to_object(self, target, method_name, ...)
         const char *self
         ObjectiveC::id target
         const char *method_name
     INIT:
-        SEL method_sel;
-        int nargs;
-        id retVal;
-        Method method = NULL;
-        const char *returnType = NULL;
+        SV *selector_name = NULL;
+        AV *arguments = NULL;
+        SV *return_value = NULL;
     CODE:
-        nargs = items - 3;
-        if(nargs != 0) {
-            croak("Calling with more than one argument is not yet implemented\n");
-        }
-        method_sel = sel_getUid(method_name);
-        method = class_getInstanceMethod(object_getClass(target), method_sel);
-        returnType = method_copyReturnType(method);
-        if(strncmp("@", returnType, 1)) {
-            SV *errsv = get_sv("@", GV_ADD);
-            sv_setpvf(errsv, "Non-id return types are not yet implemented (return type is '%s')", returnType);
-            free(returnType);
-            croak(NULL);
-        }
-        free(returnType);
-        retVal = objc_msgSend(target, method_sel);
-        RETVAL = retVal;
+        selector_name = newSVpv(method_name, 0);
+        arguments = get_selector_and_args(aTHX_ selector_name);
+        return_value = invoke_with_perl_args(target, selector_name, arguments);
+        RETVAL = return_value;
     OUTPUT:
         RETVAL
 
