@@ -16,26 +16,28 @@ void marshal_perl_value(AV *arguments, NSInvocation *invocation, unsigned int in
 
 SV *demarshal_return_value(NSInvocation *invocation)
 {
+    union {
+        id object;
+        const char *string;
+    } return_buffer;
+
     const char *return_type = NULL;
     HV *stash = NULL;
     SV *result = NULL;
-    id object = nil;
-    const char *string = NULL;
 
     return_type = [[invocation methodSignature] methodReturnType];
     if(return_type[0] == _C_CONST) {
         return_type++;
     }
+    [invocation getReturnValue: &return_buffer];
     switch(return_type[0]) {
         case _C_ID:
-            [invocation getReturnValue: &object];
-            result = newRV_inc(newSViv(object));
+            result = newRV_inc(newSViv(return_buffer.object));
             stash = gv_stashpv("ObjectiveC::id", 0);
             sv_bless(result, stash);
             break;
         case _C_CHARPTR:
-            [invocation getReturnValue: &string];
-            result = newSVpv(string, 0);
+            result = newSVpv(return_buffer.string, 0);
             break;
         default:
             croak("Bad return type: %c", return_type[0]);
