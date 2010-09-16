@@ -11,6 +11,37 @@
 
 typedef id ObjectiveC__id;
 
+AV *get_selector_and_args(pTHX_ SV *selector_name)
+{
+    dSP;
+    dMARK;
+    dITEMS;
+    dAX;
+
+    AV *arguments = NULL;
+    int nargs = items - 3;
+    int i;
+
+    arguments = newAV();
+
+    if(nargs > 0) {
+        if(nargs % 2 == 0) {
+            croak("Even number of arguments passed to send_to_object");
+        }
+
+        sv_catpv(selector_name, ":");
+        av_push(arguments, ST(3));
+
+        for(i = 1; i < nargs; i += 2) {
+            sv_catsv(selector_name, ST(i + 3));
+            sv_catpv(selector_name, ":");
+            av_push(arguments, ST(i + 3 + 1));
+        }
+    }
+
+    return arguments;
+}
+
 MODULE = ObjectiveC		PACKAGE = ObjectiveC
 
 void load_framework(self, name)
